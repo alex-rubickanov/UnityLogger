@@ -9,12 +9,12 @@ public class Test : MonoBehaviour
 
     private void Start()
     {
-        test.Log(LogLevel.Info, "AHSJ", this, LogType.ConsoleAndScreen);
+        test.Log(LogLevel.Info, "AHSJ", this, LogType.ConsoleAndFile);
     }
 
     private void Update()
     {
-        if(Input.anyKeyDown)
-            test.Log(LogLevel.Info, "KEY", this, LogType.ConsoleAndScreen);
+        //if(Input.anyKeyDown)
+          //  test.Log(LogLevel.Info, "KEY", this, LogType.ConsoleAndScreen);
     }
 }

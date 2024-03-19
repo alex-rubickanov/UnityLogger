@@ -171,11 +171,10 @@ MonoBehaviour:
   prefix: PlayerLog
   prefixColor: {r: 0.09803922, g: 0.94509804, b: 1, a: 1}
   logLevelFilter: 0
-  logFormat: {fileID: 0}
+  logFormat: {fileID: 11400000, guid: 27e8ff6be20d5c1468b952f67f7d43d1, type: 2}
   screenLogsEnabled: 0
   fileLogsEnabled: 1
   fontSize: 14
-  maxLines: 10
   logLifetime: 3
   DEFAULT_PATH: Game Logs/log.txt
   logFilePath: Game Logs/log.txt
@@ -365,7 +364,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &220626043
 Transform:
   m_ObjectHideFlags: 0
@@ -401,7 +400,6 @@ MonoBehaviour:
   screenLogsEnabled: 1
   fileLogsEnabled: 1
   fontSize: 14
-  maxLines: 10
   logLifetime: 3
   DEFAULT_PATH: Game Logs/log.txt
   logFilePath: Game Logs/log.txt
@@ -607,7 +605,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &975030682
 Transform:
   m_ObjectHideFlags: 0
@@ -643,7 +641,6 @@ MonoBehaviour:
   screenLogsEnabled: 1
   fileLogsEnabled: 1
   fontSize: 14
-  maxLines: 10
   logLifetime: 3
   DEFAULT_PATH: Game Logs/log.txt
   logFilePath: Game Logs/log.txt
@@ -709,7 +706,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1566199443
 RectTransform:
   m_ObjectHideFlags: 0
@@ -787,7 +784,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1812065333
 Transform:
   m_ObjectHideFlags: 0
@@ -823,7 +820,6 @@ MonoBehaviour:
   screenLogsEnabled: 1
   fileLogsEnabled: 1
   fontSize: 14
-  maxLines: 10
   logLifetime: 3
   DEFAULT_PATH: Game Logs/log.txt
   logFilePath: Game Logs/log.txt
@@ -843,7 +839,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1870583246
 Transform:
   m_ObjectHideFlags: 0
@@ -875,11 +871,10 @@ MonoBehaviour:
   prefix: Player
   prefixColor: {r: 1, g: 0, b: 0.84313726, a: 1}
   logLevelFilter: 0
-  logFormat: {fileID: 0}
-  screenLogsEnabled: 1
-  fileLogsEnabled: 1
+  logFormat: {fileID: 11400000, guid: 27e8ff6be20d5c1468b952f67f7d43d1, type: 2}
+  screenLogsEnabled: 0
+  fileLogsEnabled: 0
   fontSize: 14
-  maxLines: 10
   logLifetime: 3
   DEFAULT_PATH: Game Logs/log.txt
   logFilePath: Game Logs/log.txt

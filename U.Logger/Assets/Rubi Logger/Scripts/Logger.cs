@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text;
 using UnityEngine;
-using UnityEngine.Serialization;
 using Object = UnityEngine.Object;
 
 namespace Rubickanov.Logger
@@ -42,15 +42,13 @@ namespace Rubickanov.Logger
 
         [SerializeField] private bool screenLogsEnabled = false;
         [SerializeField] private bool fileLogsEnabled = false;
-        
+
         // SCREEN LOG SETTINGS
         [SerializeField]
         private int fontSize = 14;
         [SerializeField]
-        private int maxLines = 10;
-        [SerializeField]
         private float logLifetime = 3.0f;
-        
+
         // FILE LOG SETTINGS
         [SerializeField, HideInInspector]
         private string DEFAULT_PATH = "Game Logs/log.txt";
@@ -58,7 +56,10 @@ namespace Rubickanov.Logger
         private string logFilePath = "Game Logs/log.txt";
 
         public delegate void LogAddedHandler(string message);
+
         public event LogAddedHandler LogAdded;
+
+        private static int logIndex = 1;
 
         private readonly Dictionary<LogLevel, string> logTypeColors = new Dictionary<LogLevel, string>
         {
@@ -66,6 +67,8 @@ namespace Rubickanov.Logger
             { LogLevel.Warning, "#FFFF00" },
             { LogLevel.Error, "#FF0000" }
         };
+
+        private LRUCache<string, string> cachedStrings = new LRUCache<string, string>(100);
 
         private void Awake()
         {
@@ -77,58 +80,57 @@ namespace Rubickanov.Logger
             ValidatePrefixColor();
         }
 
-        public void Log(LogLevel logLevel, string message, Object sender, LogType logType = LogType.Console, bool bypassLogLevelFilter = false)
+        public void Log(LogLevel logLevel, string message, Object sender, LogType logType = LogType.Console,
+            bool bypassLogLevelFilter = false)
         {
             if (ShouldLogMessage(logLevel, bypassLogLevelFilter))
             {
-                string generatedMessage = GenerateLogMessage(logLevel, message, sender);
+                string generatedMessage;
 
                 switch (logType)
                 {
                     case LogType.Console:
+                        generatedMessage = GenerateLogMessage(logLevel, message, sender, logFormat.ConsoleFormat);
                         DisplayLogMessage(logLevel, generatedMessage, sender);
                         break;
-                    
+
                     case LogType.Screen:
+                        generatedMessage = GenerateLogMessage(logLevel, message, sender, logFormat.ScreenFormat);
                         InvokeLogAddedEvent(generatedMessage);
                         break;
-                    
+
                     case LogType.File:
-                        WriteToFileAsync(logLevel, message, sender);
+                        generatedMessage = GenerateLogMessage(logLevel, message, sender, logFormat.FileFormat, true);
+                        WriteToFileAsync(logLevel, generatedMessage, sender);
                         break;
-                    
-                    case LogType.ConsoleAndScreen:
-                        DisplayLogMessage(logLevel, generatedMessage, sender);
-                        InvokeLogAddedEvent(generatedMessage);
-                        break;
-                    
+
                     case LogType.ConsoleAndFile:
+                        generatedMessage = GenerateLogMessage(logLevel, message, sender, logFormat.ConsoleFormat);
                         DisplayLogMessage(logLevel, generatedMessage, sender);
-                        WriteToFileAsync(logLevel, message, sender);
+                        generatedMessage = GenerateLogMessage(logLevel, message, sender, logFormat.FileFormat, true);
+                        WriteToFileAsync(logLevel, generatedMessage, sender);
                         break;
-                    
+
                     case LogType.ScreenAndFile:
+                        generatedMessage = GenerateLogMessage(logLevel, message, sender, logFormat.ScreenFormat);
                         InvokeLogAddedEvent(generatedMessage);
-                        WriteToFileAsync(logLevel, message, sender);
+                        generatedMessage = GenerateLogMessage(logLevel, message, sender, logFormat.FileFormat, true);
+                        WriteToFileAsync(logLevel, generatedMessage, sender);
                         break;
-                    
+
                     case LogType.All:
+                        generatedMessage = GenerateLogMessage(logLevel, message, sender, logFormat.ConsoleFormat);
                         DisplayLogMessage(logLevel, generatedMessage, sender);
+                        generatedMessage = GenerateLogMessage(logLevel, message, sender, logFormat.ScreenFormat);
                         InvokeLogAddedEvent(generatedMessage);
-                        WriteToFileAsync(logLevel, message, sender);
+                        generatedMessage = GenerateLogMessage(logLevel, message, sender, logFormat.FileFormat, true);
+                        WriteToFileAsync(logLevel, generatedMessage, sender);
                         break;
-                    
+
                     default:
                         throw new ArgumentOutOfRangeException(nameof(logType), logType, null);
                 }
             }
-        }
-
-        public void ScreenLog(LogLevel logLevel, string message, Object sender)
-        {
-            string generatedMessage = GenerateLogMessage(logLevel, message, sender);
-            DisplayLogMessage(logLevel, generatedMessage, sender);
-            InvokeLogAddedEvent(generatedMessage);
         }
 
         private async void WriteToFileAsync(LogLevel logLevel, string message, Object sender)
@@ -163,38 +165,43 @@ namespace Rubickanov.Logger
             return (showLogs && logLevel >= logLevelFilter) || bypassLogLevelFilter;
         }
 
-        private string GenerateLogMessage(LogLevel logLevel, string message, Object sender)
+        private string GenerateLogMessage(LogLevel logLevel, string message, Object sender, List<LogPart> logParts,
+            bool isForFile = false)
         {
-            string logTypeColor = logTypeColors[logLevel];
-            string hexColor = "#" + ColorUtility.ToHtmlStringRGB(prefixColor);
-            string generatedMessage = "";
+            string cacheKey = $"{logLevel}_{sender.name}_{prefix}_{message}_{isForFile}";
+            string cachedMessage = cachedStrings.Get(cacheKey);
 
-            foreach (var part in logFormat.ConsoleFormat)
+            if (cachedMessage != null)
             {
-                switch (part)
-                {
-                    case LogPart.DateTime:
-                        generatedMessage += DateTime.Now.ToString() + " ";
-                        break;
-                    case LogPart.TimeFromStart:
-                        generatedMessage += Time.timeSinceLevelLoad + " ";
-                        break;
-                    case LogPart.LogLevel:
-                        generatedMessage += $"<color={logTypeColor}>[{logLevel}]</color> ";
-                        break;
-                    case LogPart.SenderName:
-                        generatedMessage += $"[{sender.name}] ";
-                        break;
-                    case LogPart.Prefix:
-                        generatedMessage += $"<color={hexColor}>[{prefix}]</color> ";
-                        break;
-                    case LogPart.Message:
-                        generatedMessage += message + " ";
-                        break;
-                }
+                return cachedMessage;
             }
 
-            return generatedMessage.TrimEnd();
+            string logTypeColor = GetCachedString($"logTypeColor_{logLevel}", () => logTypeColors[logLevel]);
+            string hexColor = GetCachedString("prefixColor", () => "#" + ColorUtility.ToHtmlStringRGB(prefixColor));
+            StringBuilder generatedMessage = new StringBuilder();
+
+            foreach (var part in logParts)
+            {
+                string partMessage = part switch
+                {
+                    LogPart.DateTime => GetCachedString("dateTime", () => DateTime.Now.ToString()) + " ",
+                    LogPart.TimeFromStart =>
+                        GetCachedString("timeFromStart", () => Time.timeSinceLevelLoad.ToString()) + " ",
+                    LogPart.LogLevel => isForFile ? $"[{logLevel}] " : $"<color={logTypeColor}>[{logLevel}]</color> ",
+                    LogPart.SenderName => $"[{sender.name}] ",
+                    LogPart.Prefix => isForFile ? $"[{prefix}] " : $"<color={hexColor}>[{prefix}]</color> ",
+                    LogPart.Message => message + " ",
+                    LogPart.Index => $"[{logIndex}] ",
+                    _ => throw new ArgumentOutOfRangeException(nameof(part), part, null)
+                };
+
+                generatedMessage.Append(partMessage);
+            }
+
+            string newMessage = generatedMessage.ToString().TrimEnd();
+            cachedStrings.Add(cacheKey, newMessage);
+
+            return newMessage;
         }
 
         private void DisplayLogMessage(LogLevel logLevel, string message, Object sender)
@@ -243,6 +250,18 @@ namespace Rubickanov.Logger
         public string GetLogTypeColor(LogLevel logLevel)
         {
             return logTypeColors[logLevel];
+        }
+
+        private string GetCachedString(string key, Func<string> generateString)
+        {
+            var cachedString = cachedStrings.Get(key);
+            if (cachedString == null)
+            {
+                cachedString = generateString();
+                cachedStrings.Add(key, cachedString);
+            }
+
+            return cachedString;
         }
     }
 }
