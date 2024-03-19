@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
+using UnityEngine.Serialization;
 using Object = UnityEngine.Object;
 
 namespace Rubickanov.Logger
@@ -26,23 +27,37 @@ namespace Rubickanov.Logger
 
     public class Logger : MonoBehaviour
     {
-        [SerializeField, HideInInspector]
-        private string DEFAULT_PATH = "Game Logs/log.txt";
-
-        [SerializeField, Tooltip("Show logs in the console")]
+        // MAIN SETTINGS
+        [SerializeField, Tooltip("Show logs in the console.")]
         private bool showLogs = true;
-        [SerializeField, Tooltip("Prefix for the logs")]
+        [SerializeField, Tooltip("Prefix for the logs.")]
         private string prefix = "Logger";
-        [SerializeField, Tooltip("Color of the prefix")]
+        [SerializeField, Tooltip("Color of the prefix.")]
         private Color prefixColor = new Color(9, 167, 217, 255);
         [SerializeField,
          Tooltip("Log level filter. Only logs with the same or higher level will be shown in the console.")]
         private LogLevel logLevelFilter = LogLevel.Info;
-        [SerializeField, Tooltip("Path to the log file")]
+        [SerializeField, Tooltip("Format of the log message.")]
+        private LogFormat logFormat;
+
+        [SerializeField] private bool screenLogsEnabled = false;
+        [SerializeField] private bool fileLogsEnabled = false;
+        
+        // SCREEN LOG SETTINGS
+        [SerializeField]
+        private int fontSize = 14;
+        [SerializeField]
+        private int maxLines = 10;
+        [SerializeField]
+        private float logLifetime = 3.0f;
+        
+        // FILE LOG SETTINGS
+        [SerializeField, HideInInspector]
+        private string DEFAULT_PATH = "Game Logs/log.txt";
+        [SerializeField, Tooltip("Path to the log file.")]
         private string logFilePath = "Game Logs/log.txt";
 
         public delegate void LogAddedHandler(string message);
-
         public event LogAddedHandler LogAdded;
 
         private readonly Dictionary<LogLevel, string> logTypeColors = new Dictionary<LogLevel, string>
@@ -152,8 +167,34 @@ namespace Rubickanov.Logger
         {
             string logTypeColor = logTypeColors[logLevel];
             string hexColor = "#" + ColorUtility.ToHtmlStringRGB(prefixColor);
-            return
-                $"<color={logTypeColor}>[{logLevel}]</color> <color={hexColor}>[{prefix}] </color> [{sender.name}]: {message}";
+            string generatedMessage = "";
+
+            foreach (var part in logFormat.ConsoleFormat)
+            {
+                switch (part)
+                {
+                    case LogPart.DateTime:
+                        generatedMessage += DateTime.Now.ToString() + " ";
+                        break;
+                    case LogPart.TimeFromStart:
+                        generatedMessage += Time.timeSinceLevelLoad + " ";
+                        break;
+                    case LogPart.LogLevel:
+                        generatedMessage += $"<color={logTypeColor}>[{logLevel}]</color> ";
+                        break;
+                    case LogPart.SenderName:
+                        generatedMessage += $"[{sender.name}] ";
+                        break;
+                    case LogPart.Prefix:
+                        generatedMessage += $"<color={hexColor}>[{prefix}]</color> ";
+                        break;
+                    case LogPart.Message:
+                        generatedMessage += message + " ";
+                        break;
+                }
+            }
+
+            return generatedMessage.TrimEnd();
         }
 
         private void DisplayLogMessage(LogLevel logLevel, string message, Object sender)
