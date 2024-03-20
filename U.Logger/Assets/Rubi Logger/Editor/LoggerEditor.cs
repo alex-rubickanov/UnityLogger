@@ -2,26 +2,29 @@ using System;
 using UnityEditor;
 using UnityEngine;
 
+
 namespace Rubickanov.Logger.Editor
 {
     [CustomEditor(typeof(RubiLogger))]
     public class LoggerEditor : UnityEditor.Editor
     {
+        private SerializedProperty defaultPathProperty;
         private SerializedProperty showLogsProperty;
-        private SerializedProperty prefixProperty;
-        private SerializedProperty prefixColorProperty;
+        private SerializedProperty categoryNameProperty;
+        private SerializedProperty categoryColorProperty;
         private SerializedProperty logLevelFilterProperty;
         private SerializedProperty logFormatProperty;
 
         private SerializedProperty screenLogsEnabledProperty;
+        private SerializedProperty showErrorWhenDisabledScreenLogsProperty;
         private SerializedProperty fileLogsEnabledProperty;
-
-        private string putLoggerDisplayWarn =
+        private SerializedProperty showErrorWhenDisabledFileLogsProperty;
+        
+        private const string putLoggerDisplayWarn =
             "Settings for Screen Logs are in LoggerDisplay component.\n Please be sure you added LoggerDisplay in the scene.";
-        private string screenLogPreviewInLogDisplayWant =
+        private const string screenLogPreviewInLogDisplayWant =
             "Screen Logs will be the same like Editor Console logs, but you can add index prefix in LoggerDisplay. Please be sure you added LoggerDisplay in the scene.";
 
-        private SerializedProperty defaultPathProperty;
         private SerializedProperty logFilePathProperty;
 
         // Editor Variables
@@ -36,17 +39,19 @@ namespace Rubickanov.Logger.Editor
         {
             logTime = DateTime.Now;
             headerStyle = CreateHeaderStyle();
-
+            
+            defaultPathProperty = serializedObject.FindProperty("DEFAULT_PATH");
             showLogsProperty = serializedObject.FindProperty("showLogs");
-            prefixProperty = serializedObject.FindProperty("prefix");
-            prefixColorProperty = serializedObject.FindProperty("prefixColor");
+            categoryNameProperty = serializedObject.FindProperty("categoryName");
+            categoryColorProperty = serializedObject.FindProperty("categoryColor");
             logLevelFilterProperty = serializedObject.FindProperty("logLevelFilter");
             logFormatProperty = serializedObject.FindProperty("logFormat");
 
             screenLogsEnabledProperty = serializedObject.FindProperty("screenLogsEnabled");
+            showErrorWhenDisabledScreenLogsProperty = serializedObject.FindProperty("showErrorWhenDisabledScreenLogs");
             fileLogsEnabledProperty = serializedObject.FindProperty("fileLogsEnabled");
+            showErrorWhenDisabledFileLogsProperty = serializedObject.FindProperty("showErrorWhenDisabledFileLogs");
 
-            defaultPathProperty = serializedObject.FindProperty("DEFAULT_PATH");
             logFilePathProperty = serializedObject.FindProperty("logFilePath");
         }
 
@@ -87,15 +92,15 @@ namespace Rubickanov.Logger.Editor
 
             EditorGUILayout.PropertyField(showLogsProperty, new GUIContent("Show Logs"));
             EditorGUILayout.BeginHorizontal();
-            EditorGUILayout.PropertyField(prefixProperty, new GUIContent("Prefix"), GUILayout.ExpandWidth(true));
+            EditorGUILayout.PropertyField(categoryNameProperty, new GUIContent("Category"), GUILayout.ExpandWidth(true));
             if (GUILayout.Button(new GUIContent("Auto Prefix", "Click to automatically name the Logger prefix"),
                     GUILayout.Width(100)))
             {
-                prefixProperty.stringValue = serializedObject.targetObject.name;
+                categoryNameProperty.stringValue = serializedObject.targetObject.name;
             }
 
             EditorGUILayout.EndHorizontal();
-            EditorGUILayout.PropertyField(prefixColorProperty, new GUIContent("Prefix Color"));
+            EditorGUILayout.PropertyField(categoryColorProperty, new GUIContent("Category Color"));
             EditorGUILayout.PropertyField(logLevelFilterProperty, new GUIContent("Log Level Filter"));
             EditorGUILayout.Space(15);
         }
@@ -120,13 +125,17 @@ namespace Rubickanov.Logger.Editor
                     },
                     GUILayout.MaxWidth(EditorGUIUtility.currentViewWidth));
             }
+            else
+            {
+                EditorGUILayout.PropertyField(showErrorWhenDisabledScreenLogsProperty, new GUIContent("Show Error When Disabled"));
+            }
 
             EditorGUILayout.Space(15);
         }
 
         private void DrawFileSettings()
         {
-            string fileLogsLabel = screenLogsEnabledProperty.boolValue ? "File Logs Enabled" : "File Logs Disabled";
+            string fileLogsLabel = fileLogsEnabledProperty.boolValue ? "File Logs Enabled" : "File Logs Disabled";
             EditorGUILayout.PropertyField(fileLogsEnabledProperty, new GUIContent(fileLogsLabel));
             if (fileLogsEnabledProperty.boolValue)
             {
@@ -141,14 +150,18 @@ namespace Rubickanov.Logger.Editor
 
                 EditorGUILayout.EndHorizontal();
             }
+            else
+            {
+                EditorGUILayout.PropertyField(showErrorWhenDisabledFileLogsProperty, new GUIContent("Show Error When Disabled"));
+            }
 
             EditorGUILayout.Space(15);
         }
 
         private void DrawLogsPreview()
         {
-            string hexColor = ColorUtility.ToHtmlStringRGB(prefixColorProperty.colorValue);
-            string prefix = prefixProperty.stringValue;
+            string hexColor = ColorUtility.ToHtmlStringRGB(categoryColorProperty.colorValue);
+            string prefix = categoryNameProperty.stringValue;
 
             showEditorLogPreview = EditorGUILayout.Foldout(showEditorLogPreview, "Editor Log Preview");
             if (showEditorLogPreview)
@@ -157,7 +170,7 @@ namespace Rubickanov.Logger.Editor
                 {
                     string logTypeColor = ((RubiLogger)target).GetLogTypeColor(logType);
                     EditorGUILayout.LabelField(
-                        $"<color={logTypeColor}>[{logType}]</color> <color=#{hexColor}>[{prefix}] </color>  [SenderName]: This is a {logType} message",
+                        $"<color={logTypeColor}>[{logType}]</color> <color=#{hexColor}>[{prefix}] </color> [SenderName]: This is a {logType} message",
                         new GUIStyle()
                         {
                             fontSize = 14,
@@ -219,9 +232,9 @@ namespace Rubickanov.Logger.Editor
         private new void DrawHeader()
         {
             Rect rect = EditorGUILayout.GetControlRect(false, 30);
-            EditorGUI.DrawRect(rect, prefixColorProperty.colorValue);
+            EditorGUI.DrawRect(rect, categoryColorProperty.colorValue);
 
-            string name = prefixProperty.stringValue;
+            string name = categoryNameProperty.stringValue;
 
             EditorGUI.LabelField(rect, $"{name} Settings", headerStyle);
         }
@@ -240,7 +253,7 @@ namespace Rubickanov.Logger.Editor
 
         private void UpdateHeaderStyleColor()
         {
-            Color prefixColor = prefixColorProperty.colorValue;
+            Color prefixColor = categoryColorProperty.colorValue;
 
             float brightness = 0.299f * prefixColor.r + 0.587f * prefixColor.g + 0.114f * prefixColor.b;
             if (brightness > 0.5f)

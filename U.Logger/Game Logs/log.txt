@@ -1,23 +1,4 @@
-3/20/2024 3:50:49 PM [Info] [NetworkLog] [PlayerClient]: Attempt to connect to server...
-3/20/2024 3:50:52 PM [Warning] [NetworkLog] [PlayerClient]: Connection failed! 
-3/20/2024 3:50:56 PM [Info] [NetworkLog] [PlayerClient]: Attempt to connect to server...
-3/20/2024 3:50:59 PM [Info] [NetworkLog] [PlayerClient]: Connected!
-3/20/2024 3:51:01 PM [Info] [ManagersLog] [GameManager]: Game started!
-3/20/2024 3:51:05 PM [Info] [EnemiesLog] [Enemy]: Enemy spawned!
-3/20/2024 3:51:07 PM [Info] [EnemiesLog] [Enemy]: Enemy spawned!
-3/20/2024 3:51:08 PM [Info] [EnemiesLog] [Enemy]: Enemy spawned!
-3/20/2024 3:51:10 PM [Info] [AudioLog] [BG Music]: BG music looping.
-3/20/2024 4:55:18 PM [Info] [NetworkLog] [PlayerClient]: Attempt to connect to server...
-3/20/2024 4:55:18 PM [Warning] [NetworkLog] [PlayerClient]: Connection failed! 
-3/20/2024 4:55:19 PM [Info] [NetworkLog] [PlayerClient]: Attempt to connect to server...
-3/20/2024 4:55:21 PM [Warning] [NetworkLog] [PlayerClient]: Connection failed! 
-3/20/2024 4:55:21 PM [Info] [NetworkLog] [PlayerClient]: Attempt to connect to server...
-3/20/2024 4:55:22 PM [Info] [NetworkLog] [PlayerClient]: Connected!
-3/20/2024 4:55:22 PM [Info] [ManagersLog] [GameManager]: Game started!
-3/20/2024 5:00:34 PM [Info] [NetworkLog] [PlayerClient]: Attempt to connect to server...
-3/20/2024 5:00:37 PM [Error] [NetworkLog] [PlayerClient]: Server is not found!
-3/20/2024 5:00:40 PM [Info] [NetworkLog] [PlayerClient]: Attempt to connect to server...
-3/20/2024 5:00:43 PM [Info] [NetworkLog] [PlayerClient]: Connected!
-3/20/2024 5:00:46 PM [Info] [ManagersLog] [GameManager]: Player ID is 21.
-3/20/2024 5:00:49 PM [Info] [EnemiesLog] [Enemy]: BT current node: Attack 
-3/20/2024 5:00:53 PM [Error] [AudioLog] [BG Music]: BG Music Audiosource is not playing anything!
+3/21/2024 1:21:18 AM [Info] [PlayerLog] [PlayerClient]: Player started
+3/21/2024 1:21:36 AM [Info] [PlayerLog] [PlayerClient]: Player started
+3/21/2024 1:21:45 AM [Info] [PlayerLog] [PlayerClient]: Player started
+3/21/2024 1:22:31 AM [Info] [PlayerLog] [PlayerClient]: 100
