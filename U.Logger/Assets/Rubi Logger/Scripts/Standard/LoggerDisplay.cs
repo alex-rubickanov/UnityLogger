@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;
@@ -20,7 +21,7 @@ namespace Rubickanov.Logger
         [SerializeField]
         private bool addIndexPrefix = true;
 
-        private List<Logger> loggers = new List<Logger>();
+        private List<RubiLogger> loggers = new List<RubiLogger>();
         protected Queue<RectTransform> logLines = new Queue<RectTransform>();
         protected StringBuilder logText = new StringBuilder();
 
@@ -52,7 +53,7 @@ namespace Rubickanov.Logger
 
         private void SubscribeToLoggers()
         {
-            foreach (var logger in FindObjectsOfType<Logger>())
+            foreach (var logger in FindObjectsOfType<RubiLogger>())
             {
                 logger.LogAdded += UpdateConsole;
                 loggers.Add(logger);

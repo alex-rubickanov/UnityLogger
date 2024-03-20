@@ -3,13 +3,12 @@ using UnityEngine;
 
 namespace Rubickanov.Logger.Editor
 {
-    [CustomEditor(typeof(LoggerDisplay))]
-    public class LoggerDisplayEditor : UnityEditor.Editor
+    [CustomEditor(typeof(CFLoggerDisplay))]
+    public class CFLoggerDisplayEditor : UnityEditor.Editor
     {
         private SerializedProperty fontSizeProperty;
         private SerializedProperty maxLinesProperty;
         private SerializedProperty logLifetimeProperty;
-        private SerializedProperty addIndexPrefixProperty;
 
         private GUIStyle headerStyle;
 
@@ -18,7 +17,6 @@ namespace Rubickanov.Logger.Editor
             fontSizeProperty = serializedObject.FindProperty("fontSize");
             maxLinesProperty = serializedObject.FindProperty("maxLines");
             logLifetimeProperty = serializedObject.FindProperty("logLifetime");
-            addIndexPrefixProperty = serializedObject.FindProperty("addIndexPrefix");
 
             headerStyle = new GUIStyle()
             {
@@ -26,7 +24,7 @@ namespace Rubickanov.Logger.Editor
                 fontStyle = FontStyle.Bold,
                 alignment = TextAnchor.MiddleCenter,
                 margin = new RectOffset(0, 0, 10, 10),
-                normal = { textColor = new Color(0.8431373f, 0.7294118f, 0.4901961f) }
+                normal = { textColor = new Color(0.6784313725490196f, 1f, 0.054901960784313725f) }
             };
         }
 
@@ -35,17 +33,16 @@ namespace Rubickanov.Logger.Editor
             serializedObject.Update();
 
             Rect rect = EditorGUILayout.GetControlRect(false, 30);
-            EditorGUI.DrawRect(rect, new Color(0.1686275f, 0.1686275f, 0.1686275f));
+            EditorGUI.DrawRect(rect, new Color(0.10196078431372549f, 0.10196078431372549f, 00.10196078431372549f));
 
-            string name = "Logger Display";
+            string name = "CF Logger Display";
 
             EditorGUI.LabelField(rect, $"{name}", headerStyle);
 
             EditorGUILayout.PropertyField(fontSizeProperty);
             EditorGUILayout.PropertyField(maxLinesProperty);
             EditorGUILayout.PropertyField(logLifetimeProperty);
-            EditorGUILayout.PropertyField(addIndexPrefixProperty);
-            
+
             serializedObject.ApplyModifiedProperties();
         }
     }

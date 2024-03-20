@@ -78,4 +78,4 @@ MonoBehaviour:
   fontSize: 30
   maxLines: 10
   logLifetime: 3
-  addIndexPrefix: 0
+  addIndexPrefix: 1

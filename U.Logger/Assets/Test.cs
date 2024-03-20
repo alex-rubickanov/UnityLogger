@@ -1,28 +1,24 @@
-using Rubickanov.Logger;
 using UnityEngine;
-using Logger = Rubickanov.Logger.Logger;
-using LogType = Rubickanov.Logger.LogType;
+using Rubickanov.Logger;
 
 public class Test : MonoBehaviour
 {
-    public Logger[] test;
+    public RubiLogger test;
+    public string message;
+    public int inputKey;
+    
+    public LogLevel LogLevel;
 
     private void Start()
     {
-        foreach (var t in test)
-        {
-            t.Log(LogLevel.Info, "AHSJ", this, LogType.ConsoleAndScreen);
-        }
+        
     }
 
     private void Update()
     {
-        if (Input.anyKeyDown)
+        if (Input.GetKeyDown(inputKey.ToString()))
         {
-            foreach (var t in test)
-            {
-                t.Log(LogLevel.Info, "KEY", this, LogType.ConsoleAndScreen);
-            }
+            test.Log(LogLevel, message, this, LogOutput.ConsoleAndFile);
         }
     }
 }

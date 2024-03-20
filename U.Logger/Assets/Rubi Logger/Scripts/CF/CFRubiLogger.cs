@@ -7,7 +7,7 @@ using Object = UnityEngine.Object;
 
 namespace Rubickanov.Logger
 {
-    public class CFLogger : Logger
+    public class CFRubiLogger : RubiLogger
     {
         // MAIN SETTINGS
         [SerializeField, Tooltip("Format of the log message.")]
@@ -40,7 +40,7 @@ namespace Rubickanov.Logger
         }
 
         // Public Methods
-        public override void Log(LogLevel logLevel, string message, Object sender, LogType logType = LogType.Console,
+        public override void Log(LogLevel logLevel, string message, Object sender, LogOutput logOutput = LogOutput.Console,
             bool bypassLogLevelFilter = false)
         {
             if (ShouldLogMessage(logLevel, bypassLogLevelFilter))
@@ -49,32 +49,32 @@ namespace Rubickanov.Logger
 
                 string generatedMessage;
 
-                switch (logType)
+                switch (logOutput)
                 {
-                    case LogType.Console:
+                    case LogOutput.Console:
                         generatedMessage = GenerateLogMessage(logLevel, message, sender.name, logFormat.ConsoleFormat);
                         DisplayLogMessage(logLevel, generatedMessage, sender);
                         break;
 
-                    case LogType.Screen:
+                    case LogOutput.Screen:
                         generatedMessage = GenerateLogMessage(logLevel, message, sender.name, logFormat.ScreenFormat);
                         InvokeLogAddedEvent(generatedMessage);
                         break;
 
-                    case LogType.File:
+                    case LogOutput.File:
                         generatedMessage =
                             GenerateLogMessage(logLevel, message, sender.name, logFormat.FileFormat, false);
                         WriteToFileAsync(generatedMessage);
                         break;
 
-                    case LogType.ConsoleAndScreen:
+                    case LogOutput.ConsoleAndScreen:
                         generatedMessage = GenerateLogMessage(logLevel, message, sender.name, logFormat.ConsoleFormat);
                         DisplayLogMessage(logLevel, generatedMessage, sender);
                         generatedMessage = GenerateLogMessage(logLevel, message, sender.name, logFormat.ScreenFormat);
                         InvokeLogAddedEvent(generatedMessage);
                         break;
 
-                    case LogType.ConsoleAndFile:
+                    case LogOutput.ConsoleAndFile:
                         generatedMessage = GenerateLogMessage(logLevel, message, sender.name, logFormat.ConsoleFormat);
                         DisplayLogMessage(logLevel, generatedMessage, sender);
                         generatedMessage =
@@ -82,7 +82,7 @@ namespace Rubickanov.Logger
                         WriteToFileAsync(generatedMessage);
                         break;
 
-                    case LogType.ScreenAndFile:
+                    case LogOutput.ScreenAndFile:
                         generatedMessage = GenerateLogMessage(logLevel, message, sender.name, logFormat.ScreenFormat);
                         InvokeLogAddedEvent(generatedMessage);
                         generatedMessage =
@@ -90,7 +90,7 @@ namespace Rubickanov.Logger
                         WriteToFileAsync(generatedMessage);
                         break;
 
-                    case LogType.All:
+                    case LogOutput.All:
                         generatedMessage = GenerateLogMessage(logLevel, message, sender.name, logFormat.ConsoleFormat);
                         DisplayLogMessage(logLevel, generatedMessage, sender);
                         generatedMessage = GenerateLogMessage(logLevel, message, sender.name, logFormat.ScreenFormat);
@@ -101,7 +101,7 @@ namespace Rubickanov.Logger
                         break;
 
                     default:
-                        throw new ArgumentOutOfRangeException(nameof(logType), logType, null);
+                        throw new ArgumentOutOfRangeException(nameof(logOutput), logOutput, null);
                 }
             }
         }
@@ -112,7 +112,7 @@ namespace Rubickanov.Logger
             if (!fileLogsEnabled)
             {
                 Log(LogLevel.Warning, "File logs are disabled. Enable them in the Logger component.", this,
-                    LogType.Console);
+                    LogOutput.Console);
                 return;
             }
 

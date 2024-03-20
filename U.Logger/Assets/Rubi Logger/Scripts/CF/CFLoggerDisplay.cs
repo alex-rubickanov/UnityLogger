@@ -12,7 +12,7 @@ namespace Rubickanov.Logger
     {
         [Header("Settings")]
 
-        private List<CFLogger> loggersCF = new List<CFLogger>();
+        private List<CFRubiLogger> loggersCF = new List<CFRubiLogger>();
 
 
         private void OnEnable()
@@ -41,7 +41,7 @@ namespace Rubickanov.Logger
 
         private void SubscribeToLoggers()
         {
-            foreach (var logger in FindObjectsOfType<CFLogger>())
+            foreach (var logger in FindObjectsOfType<CFRubiLogger>())
             {
                 logger.LogAdded += UpdateConsole;
                 loggersCF.Add(logger);

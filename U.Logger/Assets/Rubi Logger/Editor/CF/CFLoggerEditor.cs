@@ -1,11 +1,13 @@
 using System;
+using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace Rubickanov.Logger.Editor
 {
-    [CustomEditor(typeof(Logger))]
-    public class LoggerEditor : UnityEditor.Editor
+    [CustomEditor(typeof(CFRubiLogger))]
+    public class CFLoggerEditor : UnityEditor.Editor
     {
         private SerializedProperty showLogsProperty;
         private SerializedProperty prefixProperty;
@@ -18,8 +20,6 @@ namespace Rubickanov.Logger.Editor
 
         private string putLoggerDisplayWarn =
             "Settings for Screen Logs are in LoggerDisplay component.\n Please be sure you added LoggerDisplay in the scene.";
-        private string screenLogPreviewInLogDisplayWant =
-            "Screen Logs will be the same like Editor Console logs, but you can add index prefix in LoggerDisplay. Please be sure you added LoggerDisplay in the scene.";
 
         private SerializedProperty defaultPathProperty;
         private SerializedProperty logFilePathProperty;
@@ -30,11 +30,9 @@ namespace Rubickanov.Logger.Editor
         private bool showScreenLogPreview = true;
 
         private GUIStyle headerStyle;
-        private DateTime logTime;
 
         private void OnEnable()
         {
-            logTime = DateTime.Now;
             headerStyle = CreateHeaderStyle();
 
             showLogsProperty = serializedObject.FindProperty("showLogs");
@@ -50,6 +48,18 @@ namespace Rubickanov.Logger.Editor
             logFilePathProperty = serializedObject.FindProperty("logFilePath");
         }
 
+        private GUIStyle CreateHeaderStyle()
+        {
+            return new GUIStyle()
+            {
+                fontSize = 22,
+                fontStyle = FontStyle.Bold,
+                alignment = TextAnchor.MiddleCenter,
+                margin = new RectOffset(0, 0, 10, 10),
+                normal = { textColor = new Color(0.56f, 0.56f, 0.56f) }
+            };
+        }
+
         public override void OnInspectorGUI()
         {
             serializedObject.Update();
@@ -63,22 +73,39 @@ namespace Rubickanov.Logger.Editor
             DrawScreenSettings();
 
             DrawFileSettings();
-
-            EditorGUILayout.LabelField("Logs Preview", new GUIStyle()
-            {
-                fontSize = 16,
-                fontStyle = FontStyle.Bold,
-                alignment = TextAnchor.MiddleCenter,
-                margin = new RectOffset(0, 0, 10, 10),
-                normal = { textColor = new Color(0.56f, 0.56f, 0.56f) }
-            });
-
-            DrawLogsPreview();
-
-
-            EditorGUILayout.Space(10);
-
+            
             serializedObject.ApplyModifiedProperties();
+
+            if (logFormatProperty.objectReferenceValue != null)
+            {
+                DrawLogsPreview();
+            }
+
+        }
+
+        private void UpdateHeaderStyleColor()
+        {
+            Color prefixColor = prefixColorProperty.colorValue;
+
+            float brightness = 0.299f * prefixColor.r + 0.587f * prefixColor.g + 0.114f * prefixColor.b;
+            if (brightness > 0.5f)
+            {
+                headerStyle.normal.textColor = Color.black;
+            }
+            else
+            {
+                headerStyle.normal.textColor = Color.white;
+            }
+        }
+
+        private new void DrawHeader()
+        {
+            Rect rect = EditorGUILayout.GetControlRect(false, 30);
+            EditorGUI.DrawRect(rect, prefixColorProperty.colorValue);
+
+            string name = prefixProperty.stringValue;
+
+            EditorGUI.LabelField(rect, $"CF {name} Settings", headerStyle);
         }
 
         private void DrawMainSettings()
@@ -97,6 +124,7 @@ namespace Rubickanov.Logger.Editor
             EditorGUILayout.EndHorizontal();
             EditorGUILayout.PropertyField(prefixColorProperty, new GUIContent("Prefix Color"));
             EditorGUILayout.PropertyField(logLevelFilterProperty, new GUIContent("Log Level Filter"));
+            EditorGUILayout.PropertyField(logFormatProperty, new GUIContent("Log Format"));
             EditorGUILayout.Space(15);
         }
 
@@ -147,17 +175,44 @@ namespace Rubickanov.Logger.Editor
 
         private void DrawLogsPreview()
         {
-            string hexColor = ColorUtility.ToHtmlStringRGB(prefixColorProperty.colorValue);
-            string prefix = prefixProperty.stringValue;
+            EditorGUILayout.LabelField("Logs Preview", new GUIStyle()
+            {
+                fontSize = 16,
+                fontStyle = FontStyle.Bold,
+                alignment = TextAnchor.MiddleCenter,
+                margin = new RectOffset(0, 0, 10, 10),
+                normal = { textColor = new Color(0.56f, 0.56f, 0.56f) }
+            });
 
-            showEditorLogPreview = EditorGUILayout.Foldout(showEditorLogPreview, "Editor Log Preview");
-            if (showEditorLogPreview)
+            DrawLogPreview(ref showEditorLogPreview, "Editor Log Preview",
+                ((CFRubiLogger)target).LogFormat.ConsoleFormat,
+                true);
+            if (screenLogsEnabledProperty.boolValue)
+            {
+                DrawLogPreview(ref showScreenLogPreview, "Screen Log Preview",
+                    ((CFRubiLogger)target).LogFormat.ScreenFormat,
+                    true);
+            }
+
+            if (fileLogsEnabledProperty.boolValue)
+            {
+                DrawLogPreview(ref showFileLogPreview, "File Log Preview", ((CFRubiLogger)target).LogFormat.FileFormat,
+                    false);
+            }
+        }
+
+        private void DrawLogPreview(ref bool showLogPreview, string previewLabel, List<LogPart> logFormat,
+            bool richText = false)
+        {
+            showLogPreview = EditorGUILayout.Foldout(showLogPreview, previewLabel);
+            if (showLogPreview)
             {
                 foreach (LogLevel logType in Enum.GetValues(typeof(LogLevel)))
                 {
-                    string logTypeColor = ((Logger)target).GetLogTypeColor(logType);
+                    string generatedMessage =
+                        ((CFRubiLogger)target).GenerateLogPreview(logType, logFormat, richText);
                     EditorGUILayout.LabelField(
-                        $"<color={logTypeColor}>[{logType}]</color> <color={hexColor}>[{prefix}] </color>  [SenderName]: This is a {logType} message",
+                        generatedMessage,
                         new GUIStyle()
                         {
                             fontSize = 14,
@@ -168,82 +223,6 @@ namespace Rubickanov.Logger.Editor
                             richText = true
                         });
                 }
-            }
-
-            EditorGUILayout.Space(10);
-
-            showScreenLogPreview = EditorGUILayout.Foldout(showScreenLogPreview, "Screen Log Preview");
-            if (showScreenLogPreview)
-            {
-                EditorGUILayout.LabelField(
-                    screenLogPreviewInLogDisplayWant,
-                    new GUIStyle()
-                    {
-                        fontSize = 14,
-                        fontStyle = FontStyle.Normal,
-                        alignment = TextAnchor.MiddleLeft,
-                        margin = new RectOffset(0, 0, 10, 10),
-                        normal = { textColor = new Color(0.56f, 0.56f, 0.56f) },
-                        wordWrap = true
-                    },
-                    GUILayout.MaxWidth(EditorGUIUtility.currentViewWidth));
-            }
-
-            EditorGUILayout.Space(10);
-
-            showFileLogPreview = EditorGUILayout.Foldout(showFileLogPreview, "File Log Preview");
-            if (showFileLogPreview)
-            {
-                foreach (LogLevel logType in Enum.GetValues(typeof(LogLevel)))
-                {
-                    EditorGUILayout.LabelField(
-                        $"{logTime} [{logType}] [{prefix}] [SenderName]: This is a {logType} message",
-                        new GUIStyle()
-                        {
-                            fontSize = 14,
-                            fontStyle = FontStyle.Normal,
-                            alignment = TextAnchor.MiddleLeft,
-                            margin = new RectOffset(0, 0, 10, 10),
-                            normal = { textColor = new Color(0.56f, 0.56f, 0.56f) }
-                        });
-                }
-            }
-        }
-
-        private new void DrawHeader()
-        {
-            Rect rect = EditorGUILayout.GetControlRect(false, 30);
-            EditorGUI.DrawRect(rect, prefixColorProperty.colorValue);
-
-            string name = prefixProperty.stringValue;
-
-            EditorGUI.LabelField(rect, $"{name} Settings", headerStyle);
-        }
-
-        private GUIStyle CreateHeaderStyle()
-        {
-            return new GUIStyle()
-            {
-                fontSize = 22,
-                fontStyle = FontStyle.Bold,
-                alignment = TextAnchor.MiddleCenter,
-                margin = new RectOffset(0, 0, 10, 10),
-                normal = { textColor = new Color(0.56f, 0.56f, 0.56f) }
-            };
-        }
-
-        private void UpdateHeaderStyleColor()
-        {
-            Color prefixColor = prefixColorProperty.colorValue;
-
-            float brightness = 0.299f * prefixColor.r + 0.587f * prefixColor.g + 0.114f * prefixColor.b;
-            if (brightness > 0.5f)
-            {
-                headerStyle.normal.textColor = Color.black;
-            }
-            else
-            {
-                headerStyle.normal.textColor = Color.white;
             }
         }
     }

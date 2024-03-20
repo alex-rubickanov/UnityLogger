@@ -13,7 +13,7 @@ namespace Rubickanov.Logger
         Error
     }
 
-    public enum LogType
+    public enum LogOutput
     {
         Console,
         Screen,
@@ -24,7 +24,7 @@ namespace Rubickanov.Logger
         All
     }
 
-    public class Logger : MonoBehaviour
+    public class RubiLogger : MonoBehaviour
     {
         [SerializeField, HideInInspector]
         protected string DEFAULT_PATH = "Game Logs/log.txt";
@@ -40,7 +40,7 @@ namespace Rubickanov.Logger
         protected LogLevel logLevelFilter = LogLevel.Info;
         [SerializeField, Tooltip("Path to the log file")]
         protected string logFilePath = "Game Logs/log.txt";
-        
+
         [SerializeField] protected bool screenLogsEnabled = false;
         [SerializeField] protected bool fileLogsEnabled = false;
 
@@ -65,49 +65,50 @@ namespace Rubickanov.Logger
             ValidatePrefixColor();
         }
 
-        public virtual void Log(LogLevel logLevel, string message, Object sender, LogType logType = LogType.Console, bool bypassLogLevelFilter = false)
+        public virtual void Log(LogLevel logLevel, string message, Object sender, LogOutput logOutput = LogOutput.Console,
+            bool bypassLogLevelFilter = false)
         {
             if (ShouldLogMessage(logLevel, bypassLogLevelFilter))
             {
                 string generatedMessage = GenerateLogMessage(logLevel, message, sender);
 
-                switch (logType)
+                switch (logOutput)
                 {
-                    case LogType.Console:
+                    case LogOutput.Console:
                         DisplayLogMessage(logLevel, generatedMessage, sender);
                         break;
-                    
-                    case LogType.Screen:
+
+                    case LogOutput.Screen:
                         InvokeLogAddedEvent(generatedMessage);
                         break;
-                    
-                    case LogType.File:
+
+                    case LogOutput.File:
                         WriteToFileAsync(logLevel, message, sender);
                         break;
-                    
-                    case LogType.ConsoleAndScreen:
+
+                    case LogOutput.ConsoleAndScreen:
                         DisplayLogMessage(logLevel, generatedMessage, sender);
                         InvokeLogAddedEvent(generatedMessage);
                         break;
-                    
-                    case LogType.ConsoleAndFile:
+
+                    case LogOutput.ConsoleAndFile:
                         DisplayLogMessage(logLevel, generatedMessage, sender);
                         WriteToFileAsync(logLevel, message, sender);
                         break;
-                    
-                    case LogType.ScreenAndFile:
-                        InvokeLogAddedEvent(generatedMessage);
-                        WriteToFileAsync(logLevel, message, sender);
-                        break;
-                    
-                    case LogType.All:
-                        DisplayLogMessage(logLevel, generatedMessage, sender);
+
+                    case LogOutput.ScreenAndFile:
                         InvokeLogAddedEvent(generatedMessage);
                         WriteToFileAsync(logLevel, message, sender);
                         break;
-                    
+
+                    case LogOutput.All:
+                        DisplayLogMessage(logLevel, generatedMessage, sender);
+                        InvokeLogAddedEvent(generatedMessage);
+                        WriteToFileAsync(logLevel, message, sender);
+                        break;
+
                     default:
-                        throw new ArgumentOutOfRangeException(nameof(logType), logType, null);
+                        throw new ArgumentOutOfRangeException(nameof(logOutput), logOutput, null);
                 }
             }
         }
@@ -178,6 +179,7 @@ namespace Rubickanov.Logger
                 Log(LogLevel.Warning, "Screen logs are disabled. Enable them in the Logger component.", this);
                 return;
             }
+
             LogAdded?.Invoke(message);
         }
 
