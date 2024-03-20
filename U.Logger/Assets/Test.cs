@@ -5,16 +5,24 @@ using LogType = Rubickanov.Logger.LogType;
 
 public class Test : MonoBehaviour
 {
-    public Logger test;
+    public Logger[] test;
 
     private void Start()
     {
-        test.Log(LogLevel.Info, "AHSJ", this, LogType.ConsoleAndFile);
+        foreach (var t in test)
+        {
+            t.Log(LogLevel.Info, "AHSJ", this, LogType.ConsoleAndScreen);
+        }
     }
 
     private void Update()
     {
-        //if(Input.anyKeyDown)
-          //  test.Log(LogLevel.Info, "KEY", this, LogType.ConsoleAndScreen);
+        if (Input.anyKeyDown)
+        {
+            foreach (var t in test)
+            {
+                t.Log(LogLevel.Info, "KEY", this, LogType.ConsoleAndScreen);
+            }
+        }
     }
 }
