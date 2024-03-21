@@ -8,12 +8,10 @@ namespace Rubickanov.Logger.Editor
     [CustomEditor(typeof(RubiLogger))]
     public class LoggerEditor : UnityEditor.Editor
     {
-        private SerializedProperty defaultPathProperty;
         private SerializedProperty showLogsProperty;
         private SerializedProperty categoryNameProperty;
         private SerializedProperty categoryColorProperty;
         private SerializedProperty logLevelFilterProperty;
-        private SerializedProperty logFormatProperty;
 
         private SerializedProperty screenLogsEnabledProperty;
         private SerializedProperty showErrorWhenDisabledScreenLogsProperty;
@@ -40,12 +38,10 @@ namespace Rubickanov.Logger.Editor
             logTime = DateTime.Now;
             headerStyle = CreateHeaderStyle();
             
-            defaultPathProperty = serializedObject.FindProperty("DEFAULT_PATH");
             showLogsProperty = serializedObject.FindProperty("showLogs");
             categoryNameProperty = serializedObject.FindProperty("categoryName");
             categoryColorProperty = serializedObject.FindProperty("categoryColor");
             logLevelFilterProperty = serializedObject.FindProperty("logLevelFilter");
-            logFormatProperty = serializedObject.FindProperty("logFormat");
 
             screenLogsEnabledProperty = serializedObject.FindProperty("screenLogsEnabled");
             showErrorWhenDisabledScreenLogsProperty = serializedObject.FindProperty("showErrorWhenDisabledScreenLogs");
@@ -145,7 +141,7 @@ namespace Rubickanov.Logger.Editor
                 if (GUILayout.Button(new GUIContent("Set Default Path",
                         "Click to set the default path for the log file.\nYou can change default path in the Logger script.")))
                 {
-                    logFilePathProperty.stringValue = defaultPathProperty.stringValue;
+                    logFilePathProperty.stringValue = RubiConstants.DEFAULT_PATH;
                 }
 
                 EditorGUILayout.EndHorizontal();
@@ -166,11 +162,11 @@ namespace Rubickanov.Logger.Editor
             showEditorLogPreview = EditorGUILayout.Foldout(showEditorLogPreview, "Editor Log Preview");
             if (showEditorLogPreview)
             {
-                foreach (LogLevel logType in Enum.GetValues(typeof(LogLevel)))
+                foreach (LogLevel logLevel in Enum.GetValues(typeof(LogLevel)))
                 {
-                    string logTypeColor = ((RubiLogger)target).GetLogTypeColor(logType);
+                    string logTypeColor = RubiConstants.GetLogLevelColor(logLevel);
                     EditorGUILayout.LabelField(
-                        $"<color={logTypeColor}>[{logType}]</color> <color=#{hexColor}>[{prefix}] </color> [SenderName]: This is a {logType} message",
+                        $"<color={logTypeColor}>[{logLevel}]</color> <color=#{hexColor}>[{prefix}] </color> [SenderName]: This is a {logLevel} message",
                         new GUIStyle()
                         {
                             fontSize = 14,

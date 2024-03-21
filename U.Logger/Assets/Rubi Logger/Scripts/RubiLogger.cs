@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 using UnityEngine.Serialization;
@@ -7,29 +6,10 @@ using Object = UnityEngine.Object;
 
 namespace Rubickanov.Logger
 {
-    public enum LogLevel
-    {
-        Debug,
-        Info,
-        Warn,
-        Error
-    }
-
-    public enum LogOutput
-    {
-        Console,
-        Screen,
-        File,
-        ConsoleAndScreen,
-        ConsoleAndFile,
-        ScreenAndFile,
-        All
-    }
-
     public class RubiLogger : MonoBehaviour
     {
         [SerializeField, HideInInspector]
-        private string DEFAULT_PATH = "Rubi Logs/log.txt";
+        private readonly static string DEFAULT_PATH = "Logs/log.txt";
 
         [SerializeField, Tooltip("Show logs in the console")]
         private bool showLogs = true;
@@ -54,14 +34,6 @@ namespace Rubickanov.Logger
         public delegate void LogAddedHandler(string message);
 
         public event LogAddedHandler LogAdded;
-
-        private readonly Dictionary<LogLevel, string> logTypeColors = new Dictionary<LogLevel, string>
-        {
-            { LogLevel.Debug, "#FFFFFF" },
-            { LogLevel.Info, "#00B4D8" },
-            { LogLevel.Warn, "#FFFF00" },
-            { LogLevel.Error, "#FF0000" }
-        };
 
         private void Awake()
         {
@@ -120,7 +92,7 @@ namespace Rubickanov.Logger
                 }
             }
         }
-
+        
         private async void WriteToFileAsync(LogLevel logLevel, object message, Object sender)
         {
             if (!fileLogsEnabled)
@@ -166,7 +138,7 @@ namespace Rubickanov.Logger
 
         private string GenerateLogMessage(LogLevel logLevel, object message, Object sender)
         {
-            string logTypeColor = logTypeColors[logLevel];
+            string logTypeColor = RubiConstants.GetLogLevelColor(logLevel);
             string hexColor = "#" + ColorUtility.ToHtmlStringRGB(categoryColor);
             return
                 $"<color={logTypeColor}>[{logLevel}]</color> <color={hexColor}>[{categoryName}] </color> [{sender.name}]: {message}";
@@ -224,11 +196,6 @@ namespace Rubickanov.Logger
             {
                 await logFile.WriteLineAsync(message);
             }
-        }
-
-        public string GetLogTypeColor(LogLevel logLevel)
-        {
-            return logTypeColors[logLevel];
         }
     }
 }
