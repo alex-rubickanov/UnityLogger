@@ -703,6 +703,18 @@ PrefabInstance:
       value: Logs/rubi_log.txt
       objectReference: {fileID: 0}
     - target: {fileID: 1207526695009644785, guid: 6e1dd8bc25b9b9d4badefd5797b308e3, type: 3}
+      propertyPath: categoryColor.b
+      value: 0.7882353
+      objectReference: {fileID: 0}
+    - target: {fileID: 1207526695009644785, guid: 6e1dd8bc25b9b9d4badefd5797b308e3, type: 3}
+      propertyPath: categoryColor.g
+      value: 0.7882353
+      objectReference: {fileID: 0}
+    - target: {fileID: 1207526695009644785, guid: 6e1dd8bc25b9b9d4badefd5797b308e3, type: 3}
+      propertyPath: categoryColor.r
+      value: 0.7882353
+      objectReference: {fileID: 0}
+    - target: {fileID: 1207526695009644785, guid: 6e1dd8bc25b9b9d4badefd5797b308e3, type: 3}
       propertyPath: fileLogsEnabled
       value: 1
       objectReference: {fileID: 0}

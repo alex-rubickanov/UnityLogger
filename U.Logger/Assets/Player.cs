@@ -8,6 +8,6 @@ public class Player : MonoBehaviour
 
     private void Start()
     {
-        rubiLogger.Log(LogLevel.Info, "Player started!", this, LogOutput.Console);
+        rubiLogger.Log(LogLevel.Info, "Player started!", this, LogOutput.ConsoleAndFile);
     }
 }

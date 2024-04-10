@@ -32,7 +32,6 @@ namespace Rubickanov.Logger
 
 
         public delegate void LogAddedHandler(string message);
-
         public event LogAddedHandler LogAdded;
 
         private void Awake()
@@ -50,12 +49,13 @@ namespace Rubickanov.Logger
         {
             if (ShouldLogMessage(logLevel, bypassLogLevelFilter))
             {
-                string generatedMessage = GenerateLogMessage(logLevel, message, sender);
+                string generatedMessage =
+                    LogMessageGenerator.GenerateLogMessage(logLevel, message, categoryName, categoryColor, sender);
 
                 switch (logOutput)
                 {
                     case LogOutput.Console:
-                        DisplayLogMessage(logLevel, generatedMessage, sender);
+                        ConsoleLogMessage(logLevel, generatedMessage, sender);
                         break;
 
                     case LogOutput.Screen:
@@ -67,12 +67,12 @@ namespace Rubickanov.Logger
                         break;
 
                     case LogOutput.ConsoleAndScreen:
-                        DisplayLogMessage(logLevel, generatedMessage, sender);
+                        ConsoleLogMessage(logLevel, generatedMessage, sender);
                         InvokeLogAddedEvent(generatedMessage);
                         break;
 
                     case LogOutput.ConsoleAndFile:
-                        DisplayLogMessage(logLevel, generatedMessage, sender);
+                        ConsoleLogMessage(logLevel, generatedMessage, sender);
                         WriteToFileAsync(logLevel, message, sender);
                         break;
 
@@ -82,7 +82,7 @@ namespace Rubickanov.Logger
                         break;
 
                     case LogOutput.All:
-                        DisplayLogMessage(logLevel, generatedMessage, sender);
+                        ConsoleLogMessage(logLevel, generatedMessage, sender);
                         InvokeLogAddedEvent(generatedMessage);
                         WriteToFileAsync(logLevel, message, sender);
                         break;
@@ -92,7 +92,7 @@ namespace Rubickanov.Logger
                 }
             }
         }
-        
+
         private async void WriteToFileAsync(LogLevel logLevel, object message, Object sender)
         {
             if (!fileLogsEnabled)
@@ -106,7 +106,7 @@ namespace Rubickanov.Logger
                 return;
             }
 
-            string fileLog = GenerateFileLog(logLevel, message, sender);
+            string fileLog = LogMessageGenerator.GenerateFileLog(logLevel, message, categoryName, sender);
             await WriteLogToFile(fileLog);
         }
 
@@ -136,15 +136,8 @@ namespace Rubickanov.Logger
             return (showLogs && logLevel >= logLevelFilter) || bypassLogLevelFilter;
         }
 
-        private string GenerateLogMessage(LogLevel logLevel, object message, Object sender)
-        {
-            string logTypeColor = RubiConstants.GetLogLevelColor(logLevel);
-            string hexColor = "#" + ColorUtility.ToHtmlStringRGB(categoryColor);
-            return
-                $"<color={logTypeColor}>[{logLevel}]</color> <color={hexColor}>[{categoryName}] </color> [{sender.name}]: {message}";
-        }
 
-        private void DisplayLogMessage(LogLevel logLevel, string message, Object sender)
+        private void ConsoleLogMessage(LogLevel logLevel, string message, Object sender)
         {
             switch (logLevel)
             {
@@ -177,11 +170,6 @@ namespace Rubickanov.Logger
             }
 
             LogAdded?.Invoke(message);
-        }
-
-        private string GenerateFileLog(LogLevel logLevel, object message, Object sender)
-        {
-            return $"{DateTime.Now} [{logLevel}] [{categoryName}] [{sender.name}]: {message}";
         }
 
         private async System.Threading.Tasks.Task WriteLogToFile(string message)
