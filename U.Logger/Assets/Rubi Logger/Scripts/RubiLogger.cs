@@ -1,5 +1,4 @@
 using System;
-using System.IO;
 using UnityEngine;
 using UnityEngine.Serialization;
 using Object = UnityEngine.Object;
@@ -30,7 +29,6 @@ namespace Rubickanov.Logger
         [Tooltip("Show error message when trying to log to a file when it's disabled.")]
         [SerializeField] private bool showErrorWhenDisabledFileLogs = true;
 
-
         public delegate void LogAddedHandler(string message);
         public event LogAddedHandler LogAdded;
 
@@ -59,32 +57,32 @@ namespace Rubickanov.Logger
                         break;
 
                     case LogOutput.Screen:
-                        InvokeLogAddedEvent(generatedMessage);
+                        ScreenLog(generatedMessage);
                         break;
 
                     case LogOutput.File:
-                        WriteToFileAsync(logLevel, message, sender);
+                        WriteToFile(logLevel, message, sender);
                         break;
 
                     case LogOutput.ConsoleAndScreen:
                         ConsoleLogMessage(logLevel, generatedMessage, sender);
-                        InvokeLogAddedEvent(generatedMessage);
+                        ScreenLog(generatedMessage);
                         break;
 
                     case LogOutput.ConsoleAndFile:
                         ConsoleLogMessage(logLevel, generatedMessage, sender);
-                        WriteToFileAsync(logLevel, message, sender);
+                        WriteToFile(logLevel, message, sender);
                         break;
 
                     case LogOutput.ScreenAndFile:
-                        InvokeLogAddedEvent(generatedMessage);
-                        WriteToFileAsync(logLevel, message, sender);
+                        ScreenLog(generatedMessage);
+                        WriteToFile(logLevel, message, sender);
                         break;
 
                     case LogOutput.All:
                         ConsoleLogMessage(logLevel, generatedMessage, sender);
-                        InvokeLogAddedEvent(generatedMessage);
-                        WriteToFileAsync(logLevel, message, sender);
+                        ScreenLog(generatedMessage);
+                        WriteToFile(logLevel, message, sender);
                         break;
 
                     default:
@@ -93,7 +91,7 @@ namespace Rubickanov.Logger
             }
         }
 
-        private async void WriteToFileAsync(LogLevel logLevel, object message, Object sender)
+        private void WriteToFile(LogLevel logLevel, object message, Object sender)
         {
             if (!fileLogsEnabled)
             {
@@ -107,7 +105,7 @@ namespace Rubickanov.Logger
             }
 
             string fileLog = LogMessageGenerator.GenerateFileLog(logLevel, message, categoryName, sender);
-            await WriteLogToFile(fileLog);
+            FileLogWriter.FileLog(fileLog, logFilePath);
         }
 
         private void ValidateLogFilePath()
@@ -156,7 +154,7 @@ namespace Rubickanov.Logger
             }
         }
 
-        private void InvokeLogAddedEvent(string message)
+        private void ScreenLog(string message)
         {
             if (!screenLogsEnabled)
             {
@@ -170,20 +168,6 @@ namespace Rubickanov.Logger
             }
 
             LogAdded?.Invoke(message);
-        }
-
-        private async System.Threading.Tasks.Task WriteLogToFile(string message)
-        {
-            string directoryPath = Path.GetDirectoryName(logFilePath);
-            if (!Directory.Exists(directoryPath))
-            {
-                Directory.CreateDirectory(directoryPath);
-            }
-
-            using (StreamWriter logFile = new StreamWriter(logFilePath, true))
-            {
-                await logFile.WriteLineAsync(message);
-            }
         }
     }
 }
