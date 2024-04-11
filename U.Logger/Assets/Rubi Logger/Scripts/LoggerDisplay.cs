@@ -57,6 +57,7 @@ namespace Rubickanov.Logger
                 logger.LogAdded += UpdateConsole;
                 loggers.Add(logger);
             }
+            
         }
 
         private void UnsubscribeFromLoggers()
