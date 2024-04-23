@@ -718,6 +718,10 @@ PrefabInstance:
       propertyPath: fileLogsEnabled
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 1207526695009644785, guid: 6e1dd8bc25b9b9d4badefd5797b308e3, type: 3}
+      propertyPath: screenLogsEnabled
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 2306492193234049106, guid: 6e1dd8bc25b9b9d4badefd5797b308e3, type: 3}
       propertyPath: logFilePath
       value: Logs/rubi_log.txt
@@ -726,12 +730,20 @@ PrefabInstance:
       propertyPath: fileLogsEnabled
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 2306492193234049106, guid: 6e1dd8bc25b9b9d4badefd5797b308e3, type: 3}
+      propertyPath: screenLogsEnabled
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 2840667182287796376, guid: 6e1dd8bc25b9b9d4badefd5797b308e3, type: 3}
       propertyPath: logFilePath
       value: Logs/rubi_log.txt
       objectReference: {fileID: 0}
     - target: {fileID: 2840667182287796376, guid: 6e1dd8bc25b9b9d4badefd5797b308e3, type: 3}
       propertyPath: fileLogsEnabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2840667182287796376, guid: 6e1dd8bc25b9b9d4badefd5797b308e3, type: 3}
+      propertyPath: screenLogsEnabled
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5912273454884410161, guid: 6e1dd8bc25b9b9d4badefd5797b308e3, type: 3}
@@ -746,12 +758,20 @@ PrefabInstance:
       propertyPath: fileLogsEnabled
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 6456791997412473850, guid: 6e1dd8bc25b9b9d4badefd5797b308e3, type: 3}
+      propertyPath: screenLogsEnabled
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 7634354841767930773, guid: 6e1dd8bc25b9b9d4badefd5797b308e3, type: 3}
       propertyPath: logFilePath
       value: Logs/rubi_log.txt
       objectReference: {fileID: 0}
     - target: {fileID: 7634354841767930773, guid: 6e1dd8bc25b9b9d4badefd5797b308e3, type: 3}
       propertyPath: fileLogsEnabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7634354841767930773, guid: 6e1dd8bc25b9b9d4badefd5797b308e3, type: 3}
+      propertyPath: screenLogsEnabled
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8739236308452453976, guid: 6e1dd8bc25b9b9d4badefd5797b308e3, type: 3}

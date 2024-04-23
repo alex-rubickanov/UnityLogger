@@ -57,7 +57,8 @@ namespace Rubickanov.Logger
                 logger.LogAdded += UpdateConsole;
                 loggers.Add(logger);
             }
-            
+
+            RubiLoggerStatic.LogAdded += UpdateConsole;
         }
 
         private void UnsubscribeFromLoggers()
@@ -68,6 +69,8 @@ namespace Rubickanov.Logger
             }
 
             loggers.Clear();
+
+            RubiLoggerStatic.LogAdded -= UpdateConsole;
         }
 
         private RectTransform CreateLogLine(string message)
