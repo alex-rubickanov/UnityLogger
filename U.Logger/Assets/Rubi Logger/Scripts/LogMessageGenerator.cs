@@ -21,7 +21,7 @@ namespace Rubickanov.Logger
             string logTypeColor = RubiConstants.GetLogLevelColor(logLevel);
             string hexColor = "#" + ColorUtility.ToHtmlStringRGB(categoryColor);
             return
-                $"<color={logTypeColor}>[{logLevel}]</color> <color={hexColor}>[{categoryName}] </color> [{sender.name}]: {message}";
+                $"<color={logTypeColor}>[{logLevel}]</color> <color={hexColor}>[{categoryName}] </color>[{sender.name}]: {message}";
         }
         
         public static string GenerateLogMessage(LogLevel logLevel, object message, string categoryName, Color categoryColor, string sender)
@@ -29,7 +29,7 @@ namespace Rubickanov.Logger
             string logTypeColor = RubiConstants.GetLogLevelColor(logLevel);
             string hexColor = "#" + ColorUtility.ToHtmlStringRGB(categoryColor);
             return
-                $"<color={logTypeColor}>[{logLevel}]</color> <color={hexColor}>[{categoryName}] </color> [{sender}]: {message}";
+                $"<color={logTypeColor}>[{logLevel}]</color> <color={hexColor}>[{categoryName}] </color>[{sender}]: {message}";
         }
     }
 }

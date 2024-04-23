@@ -6,7 +6,7 @@ namespace Rubickanov.Logger
 {
     public static class RubiLoggerStatic
     {
-        public static string path = "Logs/log.txt";
+        public static string path = "Logs/rubi_log.txt";
         private static readonly Color defaultCategoryColor = new Color(0.7882f, 0.7882f, 0.7882f);
         public static RubiLogger.LogAddedHandler LogAdded;
         

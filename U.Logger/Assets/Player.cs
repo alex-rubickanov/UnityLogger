@@ -12,6 +12,8 @@ public class Player : MonoBehaviour
 
         Testik testik = new Testik();
         testik.Start();
+        
+        rubiLogger.Log(LogLevel.Error, "Keks", this, LogOutput.ConsoleAndFile);
     }
 }
 
@@ -20,6 +22,6 @@ public class Testik
 {
     public void Start()
     {
-        RubiLoggerStatic.Log(LogLevel.Info, "Im GAY", "Testik", LogOutput.Console, "KIKI");
+        RubiLoggerStatic.Log(LogLevel.Info, "Im GAY", "Testik", LogOutput.ConsoleAndFile, "KIKI");
     }
 }
