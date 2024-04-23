@@ -6,7 +6,6 @@ namespace Rubickanov.Logger
 {
     public static class RubiLoggerStatic
     {
-        public static string path = "Logs/rubi_log.txt";
         private static readonly Color defaultCategoryColor = new Color(0.7882f, 0.7882f, 0.7882f);
         public static RubiLogger.LogAddedHandler LogAdded;
         
@@ -36,7 +35,7 @@ namespace Rubickanov.Logger
                     break;
 
                 case LogOutput.File:
-                    WriteToFile(logLevel, message, categoryName, senderName, path);
+                    WriteToFile(logLevel, message, categoryName, senderName, RubiConstants.DEFAULT_PATH);
                     break;
 
                 case LogOutput.ConsoleAndScreen:
@@ -46,18 +45,18 @@ namespace Rubickanov.Logger
 
                 case LogOutput.ConsoleAndFile:
                     ConsoleLogMessage(logLevel, generatedMessage, senderName);
-                    WriteToFile(logLevel, message, categoryName, senderName, path);
+                    WriteToFile(logLevel, message, categoryName, senderName, RubiConstants.DEFAULT_PATH);
                     break;
 
                 case LogOutput.ScreenAndFile:
                     ScreenLog(generatedMessage);
-                    WriteToFile(logLevel, message, categoryName, senderName, path);
+                    WriteToFile(logLevel, message, categoryName, senderName, RubiConstants.DEFAULT_PATH);
                     break;
 
                 case LogOutput.All:
                     ConsoleLogMessage(logLevel, generatedMessage, senderName);
                     ScreenLog(generatedMessage);
-                    WriteToFile(logLevel, message, categoryName, senderName, path);
+                    WriteToFile(logLevel, message, categoryName, senderName, RubiConstants.DEFAULT_PATH);
                     break;
 
                 default:
