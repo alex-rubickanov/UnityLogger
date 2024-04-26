@@ -191,6 +191,17 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &179484818 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 6456791997412473850, guid: 6e1dd8bc25b9b9d4badefd5797b308e3, type: 3}
+  m_PrefabInstance: {fileID: 3854309139932895407}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f9b51601dcff7fc4c899d497413cb886, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &198566196
 GameObject:
   m_ObjectHideFlags: 0
@@ -603,6 +614,17 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 2069f0f23d9fc9b44b71d10d51b0dddc, type: 3}
+--- !u!114 &1884420225 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 7634354841767930773, guid: 6e1dd8bc25b9b9d4badefd5797b308e3, type: 3}
+  m_PrefabInstance: {fileID: 3854309139932895407}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f9b51601dcff7fc4c899d497413cb886, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1886634794
 GameObject:
   m_ObjectHideFlags: 0
@@ -616,6 +638,7 @@ GameObject:
   - component: {fileID: 1886634799}
   - component: {fileID: 1886634798}
   - component: {fileID: 1886634797}
+  - component: {fileID: 1886634800}
   m_Layer: 0
   m_Name: PlayerClient
   m_TagString: Untagged
@@ -663,7 +686,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8bb1e3061cf9fb84ba2615bb7a192990, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rubiLogger: {fileID: 1255685450}
+  rubiLogger: {fileID: 179484818}
 --- !u!114 &1886634798
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -676,7 +699,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8bb1e3061cf9fb84ba2615bb7a192990, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rubiLogger: {fileID: 1255685450}
+  rubiLogger: {fileID: 1908713523}
 --- !u!114 &1886634799
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -690,6 +713,30 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   rubiLogger: {fileID: 1407167706}
+--- !u!114 &1886634800
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1886634794}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8bb1e3061cf9fb84ba2615bb7a192990, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  rubiLogger: {fileID: 1884420225}
+--- !u!114 &1908713523 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1207526695009644785, guid: 6e1dd8bc25b9b9d4badefd5797b308e3, type: 3}
+  m_PrefabInstance: {fileID: 3854309139932895407}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f9b51601dcff7fc4c899d497413cb886, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &3854309139932895407
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -701,6 +748,10 @@ PrefabInstance:
     - target: {fileID: 1207526695009644785, guid: 6e1dd8bc25b9b9d4badefd5797b308e3, type: 3}
       propertyPath: logFilePath
       value: Logs/rubi_log.txt
+      objectReference: {fileID: 0}
+    - target: {fileID: 1207526695009644785, guid: 6e1dd8bc25b9b9d4badefd5797b308e3, type: 3}
+      propertyPath: categoryName
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 1207526695009644785, guid: 6e1dd8bc25b9b9d4badefd5797b308e3, type: 3}
       propertyPath: categoryColor.b
@@ -727,6 +778,10 @@ PrefabInstance:
       value: Logs/rubi_log.txt
       objectReference: {fileID: 0}
     - target: {fileID: 2306492193234049106, guid: 6e1dd8bc25b9b9d4badefd5797b308e3, type: 3}
+      propertyPath: categoryName
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2306492193234049106, guid: 6e1dd8bc25b9b9d4badefd5797b308e3, type: 3}
       propertyPath: fileLogsEnabled
       value: 1
       objectReference: {fileID: 0}
@@ -737,6 +792,10 @@ PrefabInstance:
     - target: {fileID: 2840667182287796376, guid: 6e1dd8bc25b9b9d4badefd5797b308e3, type: 3}
       propertyPath: logFilePath
       value: Logs/rubi_log.txt
+      objectReference: {fileID: 0}
+    - target: {fileID: 2840667182287796376, guid: 6e1dd8bc25b9b9d4badefd5797b308e3, type: 3}
+      propertyPath: categoryName
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 2840667182287796376, guid: 6e1dd8bc25b9b9d4badefd5797b308e3, type: 3}
       propertyPath: fileLogsEnabled
@@ -755,6 +814,10 @@ PrefabInstance:
       value: Logs/rubi_log.txt
       objectReference: {fileID: 0}
     - target: {fileID: 6456791997412473850, guid: 6e1dd8bc25b9b9d4badefd5797b308e3, type: 3}
+      propertyPath: categoryName
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 6456791997412473850, guid: 6e1dd8bc25b9b9d4badefd5797b308e3, type: 3}
       propertyPath: fileLogsEnabled
       value: 1
       objectReference: {fileID: 0}
@@ -765,6 +828,10 @@ PrefabInstance:
     - target: {fileID: 7634354841767930773, guid: 6e1dd8bc25b9b9d4badefd5797b308e3, type: 3}
       propertyPath: logFilePath
       value: Logs/rubi_log.txt
+      objectReference: {fileID: 0}
+    - target: {fileID: 7634354841767930773, guid: 6e1dd8bc25b9b9d4badefd5797b308e3, type: 3}
+      propertyPath: categoryName
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 7634354841767930773, guid: 6e1dd8bc25b9b9d4badefd5797b308e3, type: 3}
       propertyPath: fileLogsEnabled

@@ -1,11 +1,12 @@
-using System.Collections.Generic;
+using System.Collections.Concurrent;
 using System.IO;
+using System.Threading.Tasks;
 
 namespace Rubickanov.Logger
 {
     public static class FileLogWriter
     {
-        private static Queue<string> logQueue = new Queue<string>();
+        private static ConcurrentQueue<string> logQueue = new ConcurrentQueue<string>();
         private static bool isWriting = false;
 
         public static void FileLog(string message, string path)
@@ -20,21 +21,22 @@ namespace Rubickanov.Logger
 
             isWriting = true;
 
-            while (logQueue.Count > 0)
+            await Task.Run(async () =>
             {
-                string message = logQueue.Dequeue();
-
-                string directoryPath = Path.GetDirectoryName(path);
-                if (!Directory.Exists(directoryPath))
+                while (logQueue.TryDequeue(out string message))
                 {
-                    Directory.CreateDirectory(directoryPath);
-                }
+                    string directoryPath = Path.GetDirectoryName(path);
+                    if (!Directory.Exists(directoryPath))
+                    {
+                        Directory.CreateDirectory(directoryPath);
+                    }
 
-                using (StreamWriter logFile = new StreamWriter(path, true))
-                {
-                    await logFile.WriteLineAsync(message);
+                    using (StreamWriter logFile = new StreamWriter(path, true))
+                    {
+                        await logFile.WriteLineAsync(message);
+                    }
                 }
-            }
+            });
 
             isWriting = false;
         }

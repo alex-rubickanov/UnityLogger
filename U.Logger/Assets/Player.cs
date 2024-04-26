@@ -8,12 +8,10 @@ public class Player : MonoBehaviour
 
     private void Start()
     {
-        //rubiLogger.Log(LogLevel.Info, "Player started!", this, LogOutput.ConsoleAndFile);
-
-        Testik testik = new Testik();
-        testik.Start();
-        
-        rubiLogger.Log(LogLevel.Error, "Keks", this, LogOutput.All);
+        for (int i = 0; i < 10000; i++)
+        {
+            rubiLogger.Log(LogLevel.Info, i, this, LogOutput.ConsoleAndFile);
+        }
     }
 }
 
